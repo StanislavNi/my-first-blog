@@ -1,6 +1,6 @@
 """Script for working with the user's text"""
-from django.http import HttpResponse
 from newsite.handlers import InputHandlers, HandlerException
+from django.shortcuts import render
 
 
 def text_info(text):
@@ -54,6 +54,7 @@ def text_info(text):
 
 
 def print_string(request):
-    text = InputHandlers().parse('')
+    text = InputHandlers().parse(request.GET.get('inputtext') or 'temp text')
     result = text_info(text)
-    return HttpResponse(result)
+    final_out = {"output": result}
+    return render(request, 'blog/string_post.html', context=final_out)

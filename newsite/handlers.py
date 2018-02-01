@@ -13,10 +13,6 @@ class InputInterface(object):
     Parent class for
     user's input classes
     """
-
-    def printtt(self):
-        print(1)
-
     def get_text(self):
         raise NotImplementedError
 
@@ -41,14 +37,10 @@ class InputFileText(InputInterface):
             raise HandlerException('Несуществующий файл')
 
     def is_valid(self, users_text):
-        self.printtt()
         if users_text.endswith('.txt'):
             self._filepath = users_text
             return True
 
-    def printtt(self):
-        super(InputFileText, self).printtt()
-        print(1234567)
 
 
 class InputUrlText(InputInterface):
@@ -106,10 +98,8 @@ class InputHandlers(object):
 
     def parse(self, user_input):
         text = None
-
         for editor in self.input_handlers:
             if editor.is_valid(user_input):
                 text = editor.get_text()
                 break
-        text = requests.GET['inputtext']
         return text
