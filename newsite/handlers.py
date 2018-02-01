@@ -13,7 +13,11 @@ class InputInterface(object):
     Parent class for
     user's input classes
     """
-    def get_text(self, users_text):
+
+    def printtt(self):
+        print(1)
+
+    def get_text(self):
         raise NotImplementedError
 
     def is_valid(self, users_text):
@@ -27,9 +31,9 @@ class InputFileText(InputInterface):
     """
     _filepath = None
 
-    def get_text(self, users_text):
+    def get_text(self):
         try:
-            if os.stat(users_text).st_size > 0:
+            if os.stat(self._filepath).st_size > 0:
                 f = open(self._filepath, 'r')
                 return f.read()
             return False
@@ -37,9 +41,14 @@ class InputFileText(InputInterface):
             raise HandlerException('Несуществующий файл')
 
     def is_valid(self, users_text):
+        self.printtt()
         if users_text.endswith('.txt'):
             self._filepath = users_text
             return True
+
+    def printtt(self):
+        super(InputFileText, self).printtt()
+        print(1234567)
 
 
 class InputUrlText(InputInterface):
@@ -88,7 +97,7 @@ class ConsoleText(InputInterface):
         return True
 
 
-class InputHandlers():
+class InputHandlers(object):
     input_handlers = [
         InputFileText(),
         InputUrlText(),
@@ -102,4 +111,5 @@ class InputHandlers():
             if editor.is_valid(user_input):
                 text = editor.get_text()
                 break
+        text = requests.GET['inputtext']
         return text

@@ -54,6 +54,6 @@ def text_info(text):
 
 
 def print_string(request):
-    text = InputHandlers().parse(request.GET.get('text') or 'temp text')
+    text = InputHandlers().parse('')
     result = text_info(text)
     return HttpResponse(result)

@@ -1,0 +1,20 @@
+{% extends '.base.html' %}
+
+{% block content %}
+<form method="get">
+
+            <label>
+                <span>Введите текст, название файла или ссылку:</span><br>
+                <textarea cols="40" rows="10" name="inputtext"></textarea>
+            </label><br>
+
+
+            <label>
+                <span>Информация о тексте:</span><br>
+                <textarea cols="40" rows="10" readonly>{{ printed_text }}</textarea>
+            </label><br>
+
+
+            <input type="submit" value="Принять">
+        </form>
+{% endblock %}
