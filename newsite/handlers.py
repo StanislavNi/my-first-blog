@@ -52,18 +52,13 @@ class InputUrlText(InputInterface):
     def get_text(self):
         try:
             r = requests.get(self.users_text, timeout=1)
+            if r.status_code == requests.codes.ok:
+                soup = BeautifulSoup(r.content, 'html.parser')
+                return ''.join(c for c in soup.text)
         except requests.exceptions.InvalidURL:
             raise HandlerException('Сайта не существует')
         except requests.exceptions.ConnectionError:
             raise HandlerException('Нет доступа к интернету')
-
-    def html_parse(self):
-        r = requests.get(self.users_text, timeout=1)
-        if r.status_code == requests.codes.ok:
-            soup = BeautifulSoup(r.content, 'html.parser')
-            return '\n'+ ''.join(c for c in soup.text)
-        else:
-            raise HandlerException('Невозможно отобразить страницу')
 
     def is_valid(self, users_text):
         users_text = users_text.strip()
