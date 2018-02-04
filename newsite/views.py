@@ -1,5 +1,5 @@
 """Script for working with the user's text"""
-from newsite.handlers import InputHandlers, HandlerException
+from newsite.handlers import InputHandlers
 from django.shortcuts import render
 
 
@@ -42,6 +42,7 @@ def text_info(text):
         return text[::-1]
 
     reversed_text = reverse(text)
+
     # Print reversed strings with the length 25 symbols
     store_text('Вывод текста по 25 символов с конца: ')
     divided_reversed = (
@@ -54,7 +55,7 @@ def text_info(text):
 
 
 def print_string(request):
-    text = InputHandlers().parse(request.GET.get('inputtext') or 'temp text')
+    text = InputHandlers().parse(request.GET.get('inputtext'))
     result = text_info(text)
-    final_out = {"output": result}
+    final_out = {'output': result}
     return render(request, 'blog/string_post.html', context=final_out)
