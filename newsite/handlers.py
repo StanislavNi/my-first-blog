@@ -13,6 +13,9 @@ class InputInterface(object):
     Parent class for
     user's input classes
     """
+    def __init__(self, users_text):
+        self.users_text = users_text.strip()
+
     def get_text(self):
         raise NotImplementedError
 
@@ -25,20 +28,19 @@ class InputFileText(InputInterface):
     Get text from user's
     file
     """
-    _filepath = None
+    filelocation = None
 
     def get_text(self):
         try:
-            if os.stat(self._filepath).st_size > 0:
-                f = open(self._filepath, 'r')
+            if os.stat(self.filelocation).st_size > 0:
+                f = open(self.filelocation, 'r')
                 return f.read()
             return False
         except FileExistsError:
             raise HandlerException('Несуществующий файл')
 
-    def is_valid(self, users_text):
-        if users_text.endswith('.txt'):
-            self._filepath = users_text
+    def is_valid(self):
+        if self.users_text.endswith('.txt'):
             return True
 
 
@@ -60,10 +62,8 @@ class InputUrlText(InputInterface):
         except requests.exceptions.ConnectionError:
             raise HandlerException('Нет доступа к интернету')
 
-    def is_valid(self, users_text):
-        users_text = users_text.strip()
-        if users_text.startswith('http'):
-            self.users_text = users_text
+    def is_valid(self):
+        if self.users_text.startswith('http'):
             return True
 
 
@@ -79,8 +79,7 @@ class ConsoleText(InputInterface):
             return 'Вы ввели пустую строку'
         return self.users_text
 
-    def is_valid(self, users_text):
-        self.users_text = users_text
+    def is_valid(self):
         return True
 
 
