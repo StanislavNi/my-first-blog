@@ -1,6 +1,6 @@
 """Script for working with the user's text"""
-from django.http import HttpResponse
-from newsite.handlers import InputHandlers, HandlerException
+from newsite.handlers import InputHandlers
+from django.shortcuts import render
 
 
 def text_info(text):
@@ -11,15 +11,15 @@ def text_info(text):
         return ' '.join(map(str, stored_text))
 
     # Count the length of the text
-    store_text('Длина строки равна: ', len(text), '</br>')
+    store_text('Длина строки равна: ', len(text))
     string_list = text.split()
 
     # Count the number of letters
-    store_text('Количество слов в тексте равно: ', len(string_list), '</br>')
+    store_text('Количество слов в тексте равно: ', len(string_list))
 
     # Count the number of numerals
     num = ([int(i) for i in string_list if i.isdigit()])
-    store_text('Количество чисел в тексте равно:', len(num), '</br>')
+    store_text('Количество чисел в тексте равно:', len(num))
 
     # Divide the text by strings with the length 25 symbols
     def max_string(s, n):
@@ -31,7 +31,7 @@ def text_info(text):
 
     store_text('Вывод текста по 25 символов: ')
     for s in max_string(text, 25):
-        store_text(s, '</br>')
+        store_text(s)
 
     def reverse(text):
         """
@@ -42,18 +42,20 @@ def text_info(text):
         return text[::-1]
 
     reversed_text = reverse(text)
+
     # Print reversed strings with the length 25 symbols
     store_text('Вывод текста по 25 символов с конца: ')
     divided_reversed = (
         [reversed_text[i:i + 25] for i in
          range(0, len(reversed_text), 25)])
     for a in divided_reversed:
-        store_text(a, '</br>')
+        store_text(a)
 
     return stored_text
 
 
 def print_string(request):
-    text = InputHandlers().parse(request.GET.get('text') or 'temp text')
+    text = InputHandlers().parse(request.GET.get('inputtext'))
     result = text_info(text)
-    return HttpResponse(result)
+    final_out = {'output': result}
+    return render(request, 'blog/string_post.html', context=final_out)

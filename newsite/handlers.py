@@ -13,7 +13,7 @@ class InputInterface(object):
     Parent class for
     user's input classes
     """
-    def get_text(self, users_text):
+    def get_text(self):
         raise NotImplementedError
 
     def is_valid(self, users_text):
@@ -27,9 +27,9 @@ class InputFileText(InputInterface):
     """
     _filepath = None
 
-    def get_text(self, users_text):
+    def get_text(self):
         try:
-            if os.stat(users_text).st_size > 0:
+            if os.stat(self._filepath).st_size > 0:
                 f = open(self._filepath, 'r')
                 return f.read()
             return False
@@ -42,6 +42,7 @@ class InputFileText(InputInterface):
             return True
 
 
+
 class InputUrlText(InputInterface):
     """
     Get text from user's
@@ -51,18 +52,13 @@ class InputUrlText(InputInterface):
     def get_text(self):
         try:
             r = requests.get(self.users_text, timeout=1)
+            if r.status_code == requests.codes.ok:
+                soup = BeautifulSoup(r.content, 'html.parser')
+                return ''.join(c for c in soup.text)
         except requests.exceptions.InvalidURL:
             raise HandlerException('Сайта не существует')
         except requests.exceptions.ConnectionError:
             raise HandlerException('Нет доступа к интернету')
-
-    def html_parse(self):
-        r = requests.get(self.users_text, timeout=1)
-        if r.status_code == requests.codes.ok:
-            soup = BeautifulSoup(r.content, 'html.parser')
-            return '\n'+ ''.join(c for c in soup.text)
-        else:
-            raise HandlerException('Невозможно отобразить страницу')
 
     def is_valid(self, users_text):
         users_text = users_text.strip()
@@ -88,7 +84,7 @@ class ConsoleText(InputInterface):
         return True
 
 
-class InputHandlers():
+class InputHandlers(object):
     input_handlers = [
         InputFileText(),
         InputUrlText(),
@@ -97,7 +93,6 @@ class InputHandlers():
 
     def parse(self, user_input):
         text = None
-
         for editor in self.input_handlers:
             if editor.is_valid(user_input):
                 text = editor.get_text()
