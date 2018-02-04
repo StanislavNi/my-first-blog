@@ -13,10 +13,13 @@ class InputInterface(object):
     Parent class for
     user's input classes
     """
+    def __init__(self, users_text):
+        self.users_text = users_text.strip()
+
     def get_text(self):
         raise NotImplementedError
 
-    def is_valid(self, users_text):
+    def is_valid(self):
         raise NotImplementedError
 
 
@@ -25,22 +28,18 @@ class InputFileText(InputInterface):
     Get text from user's
     file
     """
-    _filepath = None
-
     def get_text(self):
         try:
-            if os.stat(self._filepath).st_size > 0:
-                f = open(self._filepath, 'r')
+            if os.stat(self.users_text).st_size > 0:
+                f = open(self.users_text, 'r')
                 return f.read()
             return False
         except FileExistsError:
             raise HandlerException('Несуществующий файл')
 
-    def is_valid(self, users_text):
-        if users_text.endswith('.txt'):
-            self._filepath = users_text
+    def is_valid(self):
+        if self.users_text.endswith('.txt'):
             return True
-
 
 
 class InputUrlText(InputInterface):
@@ -48,7 +47,6 @@ class InputUrlText(InputInterface):
     Get text from user's
     URL
     """
-
     def get_text(self):
         try:
             r = requests.get(self.users_text, timeout=1)
@@ -60,10 +58,8 @@ class InputUrlText(InputInterface):
         except requests.exceptions.ConnectionError:
             raise HandlerException('Нет доступа к интернету')
 
-    def is_valid(self, users_text):
-        users_text = users_text.strip()
-        if users_text.startswith('http'):
-            self.users_text = users_text
+    def is_valid(self):
+        if self.users_text.startswith('http'):
             return True
 
 
@@ -79,22 +75,22 @@ class ConsoleText(InputInterface):
             return 'Вы ввели пустую строку'
         return self.users_text
 
-    def is_valid(self, users_text):
-        self.users_text = users_text
+    def is_valid(self):
         return True
 
 
 class InputHandlers(object):
     input_handlers = [
-        InputFileText(),
-        InputUrlText(),
-        ConsoleText(),
+        InputFileText,
+        InputUrlText,
+        ConsoleText,
     ]
 
     def parse(self, user_input):
         text = None
-        for editor in self.input_handlers:
-            if editor.is_valid(user_input):
-                text = editor.get_text()
+        for handler_cls in self.input_handlers:
+            handler_instance = handler_cls(user_input)
+            if handler_instance.is_valid():
+                text = handler_instance.get_text()
                 break
         return text
