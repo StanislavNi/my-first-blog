@@ -5,16 +5,15 @@
 
     <label>
         <span>Введите текст, название файла или ссылку:</span><br>
-        <textarea cols="40" rows="10" name="inputtext"></textarea>
+        <textarea cols="40" rows="10" name="inputtext">{{ input|default:'' }}</textarea>
     </label><br>
 
 
     <label>
         <span>Информация о тексте:</span><br>
-        <textarea cols="40" rows="10" readonly>
-    {% for output in output %}{{output}}
-    {% endfor %}
-        </textarea>
+        <textarea cols="40" rows="10"
+                  readonly>{% for output in output  %}{{  output  }}
+{% endfor %}</textarea>
     </label><br>
 
     <input type="submit" value="Принять">

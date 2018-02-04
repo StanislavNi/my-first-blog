@@ -19,7 +19,7 @@ class InputInterface(object):
     def get_text(self):
         raise NotImplementedError
 
-    def is_valid(self, users_text):
+    def is_valid(self):
         raise NotImplementedError
 
 
@@ -28,12 +28,10 @@ class InputFileText(InputInterface):
     Get text from user's
     file
     """
-    filelocation = None
-
     def get_text(self):
         try:
-            if os.stat(self.filelocation).st_size > 0:
-                f = open(self.filelocation, 'r')
+            if os.stat(self.users_text).st_size > 0:
+                f = open(self.users_text, 'r')
                 return f.read()
             return False
         except FileExistsError:
@@ -44,13 +42,11 @@ class InputFileText(InputInterface):
             return True
 
 
-
 class InputUrlText(InputInterface):
     """
     Get text from user's
     URL
     """
-
     def get_text(self):
         try:
             r = requests.get(self.users_text, timeout=1)
@@ -85,15 +81,16 @@ class ConsoleText(InputInterface):
 
 class InputHandlers(object):
     input_handlers = [
-        InputFileText(),
-        InputUrlText(),
-        ConsoleText(),
+        InputFileText,
+        InputUrlText,
+        ConsoleText,
     ]
 
     def parse(self, user_input):
         text = None
-        for editor in self.input_handlers:
-            if editor.is_valid(user_input):
-                text = editor.get_text()
+        for handler_cls in self.input_handlers:
+            handler_instance = handler_cls(user_input)
+            if handler_instance.is_valid():
+                text = handler_instance.get_text()
                 break
         return text

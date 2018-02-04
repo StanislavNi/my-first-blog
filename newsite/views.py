@@ -55,7 +55,11 @@ def text_info(text):
 
 
 def print_string(request):
-    text = InputHandlers().parse(request.GET.get('inputtext'))
-    result = text_info(text)
-    final_out = {'output': result}
-    return render(request, 'blog/string_post.html', context=final_out)
+    input_text = request.GET.get('inputtext')
+    ctx = {
+        'input': input_text,
+    }
+    if input_text:
+        text = InputHandlers().parse(input_text)
+        ctx['output'] = text_info(text)
+    return render(request, 'blog/string_post.html', context=ctx)
