@@ -25,7 +25,7 @@ SECRET_KEY = '-6i9!j#y46%6d-xv-r^g#z%3ei@jvo*575mu1^!3b2dg+v7qk='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '<твоё_имя_пользователя>.pythonanywhere.com']
+ALLOWED_HOSTS = ['127.0.0.1', '<твоё_имя_пользователя>.pythonanywhere.com', 'localhost']
 
 
 # Application definition
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'blog',
     'newsite',
+    'polls.apps.PollsConfig',
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
